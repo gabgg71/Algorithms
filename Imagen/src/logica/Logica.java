@@ -1,4 +1,3 @@
-
 package logica;
 
 import java.awt.Color;
@@ -15,18 +14,14 @@ import ventana.Ventana;
 
 public class Logica {
 
-
-public Ventana v;
-
-
+    public Ventana v;
 
     BufferedImage Imagen;
-    public ArrayList<Integer> realRed = new ArrayList(),realGreen= new ArrayList(), realBlue= new ArrayList();
-    public ArrayList<Integer> generatedRed= new ArrayList(),generatedGreen= new ArrayList(),generatedBlue = new ArrayList();
-    public ArrayList<Integer> disRed= new ArrayList(), disGreen= new ArrayList(), disBlue = new ArrayList();
-    public ArrayList<Integer> fitnessPorPixel; 
+    public ArrayList<Integer> realRed = new ArrayList(), realGreen = new ArrayList(), realBlue = new ArrayList();
+    public ArrayList<Integer> generatedRed = new ArrayList(), generatedGreen = new ArrayList(), generatedBlue = new ArrayList();
+    public ArrayList<Integer> disRed = new ArrayList(), disGreen = new ArrayList(), disBlue = new ArrayList();
+    public ArrayList<Integer> fitnessPorPixel;
     int fitnessGeneral;
- 
 
     public void setVentana(Ventana v) {
         this.v = v;
@@ -66,18 +61,19 @@ public Ventana v;
         }
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    /*Metodo que cambia el valor de los pixeles de la imagen generada teniendo en 
+     cuenta el fitness, recibe un arraylist de pixeles de un plano de color y las
+     distancias correspondientes de dicho plano generado con el real*/
+    public void seleccionDePixeles(ArrayList<Integer> generados, ArrayList<Integer> distancia) {
+        int agregado;
+        for (int i = 0; i < generados.size(); i++) {
+            if (distancia.get(i) > 0) {
+                agregado = (int) (Math.random() * (distancia.get(i)));
+            } else {
+                agregado = (int) (Math.random() * (distancia.get(i)) + 0);
+            }
+            generados.set(i, generados.get(i) + agregado);
+        }
+    }
 
 }
