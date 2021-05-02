@@ -11,7 +11,11 @@ import java.util.logging.Logger;
 import logica.Logica;
 
 public class Controlador implements ActionListener{
+
 Logica l;
+
+
+
     Timer myTimer = new Timer();
     
     TimerTask task = new TimerTask() {

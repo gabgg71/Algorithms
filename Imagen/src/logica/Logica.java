@@ -15,13 +15,18 @@ import ventana.Ventana;
 
 public class Logica {
 
+
 public Ventana v;
+
+
+
     BufferedImage Imagen;
     public ArrayList<Integer> realRed = new ArrayList(),realGreen= new ArrayList(), realBlue= new ArrayList();
     public ArrayList<Integer> generatedRed= new ArrayList(),generatedGreen= new ArrayList(),generatedBlue = new ArrayList();
     public ArrayList<Integer> disRed= new ArrayList(), disGreen= new ArrayList(), disBlue = new ArrayList();
     public ArrayList<Integer> fitnessPorPixel; 
     int fitnessGeneral;
+ 
 
     public void setVentana(Ventana v) {
         this.v = v;
@@ -60,6 +65,7 @@ public Ventana v;
             generatedBlue.add(blue);
         }
     }
+
     
     
     
@@ -73,4 +79,5 @@ public Ventana v;
     
     
     
+
 }
