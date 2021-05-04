@@ -17,22 +17,24 @@ public class Logica {
     public Ventana v;
 
     BufferedImage Imagen;
+    BufferedImage ImagenAModificar;
     public ArrayList<Integer> realRed = new ArrayList(), realGreen = new ArrayList(), realBlue = new ArrayList();
     public ArrayList<Integer> generatedRed = new ArrayList(), generatedGreen = new ArrayList(), generatedBlue = new ArrayList();
     public ArrayList<Integer> disRed = new ArrayList(), disGreen = new ArrayList(), disBlue = new ArrayList();
-    public ArrayList <Float> fitnessPorPixel = new ArrayList <> ();
+    public ArrayList<Float> fitnessPorPixel = new ArrayList<>();
     float fitnessGeneral;
 
     public void setVentana(Ventana v) {
         this.v = v;
     }
 
-    public void imagen() throws FileNotFoundException, IOException {
+    public BufferedImage imagen() throws FileNotFoundException, IOException {
         try {
             InputStream Input = new FileInputStream("src/pelusis.png");
             ImageInputStream ImageInput = ImageIO.createImageInputStream(Input);
             BufferedImage ImagenL = ImageIO.read(ImageInput);
             this.Imagen = ImagenL;
+            this.ImagenAModificar = ImagenL;
             for (int y = 0; y < ImagenL.getHeight(); y++) {
                 for (int x = 0; x < ImagenL.getWidth(); x++) {
                     int srcPixel = ImagenL.getRGB(x, y);
@@ -46,9 +48,11 @@ public class Logica {
         } catch (IOException e) {
             System.out.println("Hay un error al cargar los pixeles de la imagen");
         }
+        
+        return Imagen;
     }
 
-    public void generarcoloresRandom() {
+    public Colores generarcoloresRandom() {
         Random random = new Random();
         int red, green, blue;
         for (int i = 0; i < Imagen.getHeight() * Imagen.getWidth(); i++) {
@@ -59,6 +63,8 @@ public class Logica {
             generatedGreen.add(green);
             generatedBlue.add(blue);
         }
+        Colores c = new Colores( generatedRed,generatedGreen, generatedBlue);
+        return c;
     }
 
     /*Metodo que cambia el valor de los pixeles de la imagen generada teniendo en 
@@ -75,32 +81,75 @@ public class Logica {
             generados.set(i, generados.get(i) + agregado);
         }
     }
-    
+
     /*Este metodo halla las distancias entre los pixeles de un plano real con el generado
     recibe el plano real de color ejm: realRed, el generado ejm: generatedRed y el 
     arraylist en el que guardara las distancias ejm: disRed*/
-    public ArrayList<Integer> hallarDistancia(ArrayList<Integer> real,ArrayList<Integer> generado, ArrayList<Integer> dist){
-        for(int i =0; i < real.size();i++){
-            dist.add(real.get(i)-generado.get(i));
+    public ArrayList<Integer> hallarDistancia(ArrayList<Integer> real, ArrayList<Integer> generado, ArrayList<Integer> dist) {
+        for (int i = 0; i < real.size(); i++) {
+            dist.add(real.get(i) - generado.get(i));
         }
         return dist;
     }
-    
+
     /*El fitness de un pixel es el promedio de los fitness del mismo para los diferentes
     planos de color, hallado como 1/distancia buscando asi penalizar grandes distancias*/
-    public void calcularFitness(){
-        for(int i =0 ; i< realRed.size();i++){
-            fitnessPorPixel.add((((1/disRed.get(i))+(1/disBlue.get(i))+(1/disGreen.get(i)))/3f)); 
+    public void calcularFitness() {
+        for (int i = 0; i < realRed.size(); i++) {
+            fitnessPorPixel.add((((1 / disRed.get(i)) + (1 / disBlue.get(i)) + (1 / disGreen.get(i))) / 3f));
         }
     }
-    
+
     /*Nos dice el desempeño en general de toda la poblacion de pixeles*/
-    public void fitnessGeneral(){
-        float suma =0f;
-        for(int i =0 ; i< fitnessPorPixel.size();i++){
-             suma+= fitnessPorPixel.get(i);
+    public void fitnessGeneral() {
+        float suma = 0f;
+        for (int i = 0; i < fitnessPorPixel.size(); i++) {
+            suma += fitnessPorPixel.get(i);
         }
         this.fitnessGeneral = suma / fitnessPorPixel.size();
     }
 
+    public void graficar() {
+        
+        int contador = 0;
+
+        while (contador < generatedRed.size()) {
+            for (int y = 0; y < ImagenAModificar.getHeight(); y++) {
+                for (int x = 0; x < ImagenAModificar.getWidth(); x++) {
+                    //Retrieving contents of a pixel
+                    int pixel = ImagenAModificar.getRGB(x, y);
+                    //Creating a Color object from pixel value
+                    Color color = new Color(pixel, true);
+                    //Retrieving the R G B values
+                    int red = generatedRed.get(contador);
+                    int green = generatedGreen.get(contador);
+                    int blue = generatedBlue.get(contador);
+                    //Creating new Color object
+                    color = new Color(red, green, blue);
+                    //Setting new Color object to the image
+                    ImagenAModificar.setRGB(x, y, color.getRGB());
+                    contador++;
+                }
+            }
+
+        }
+        
+         this.v.d.image = Imagen;
+         this.v.d.imagenModificada = ImagenAModificar;
+         this.v.d.repaint();
+    }
+
+    public void llamartodo() {
+        this.disRed = hallarDistancia(realRed,generatedRed,disRed);
+        this.disGreen= hallarDistancia(realGreen,generatedGreen,disGreen);
+        this.disBlue = hallarDistancia(realBlue,generatedBlue,disBlue);
+        calcularFitness();
+        fitnessGeneral();
+        graficar();
+        seleccionDePixeles(generatedRed,disRed);
+        seleccionDePixeles(generatedGreen,disGreen);
+        seleccionDePixeles(generatedBlue,disBlue);
+        
+    }
 }
+
