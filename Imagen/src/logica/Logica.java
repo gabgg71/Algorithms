@@ -86,7 +86,7 @@ public class Logica {
         return dist;
     }
     
-    /*El fitness de un pixel es el promedio de los fitness de el mismo para los diferentes
+    /*El fitness de un pixel es el promedio de los fitness del mismo para los diferentes
     planos de color, hallado como 1/distancia buscando asi penalizar grandes distancias*/
     public void calcularFitness(){
         for(int i =0 ; i< realRed.size();i++){
