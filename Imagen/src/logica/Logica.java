@@ -20,8 +20,8 @@ public class Logica {
     public ArrayList<Integer> realRed = new ArrayList(), realGreen = new ArrayList(), realBlue = new ArrayList();
     public ArrayList<Integer> generatedRed = new ArrayList(), generatedGreen = new ArrayList(), generatedBlue = new ArrayList();
     public ArrayList<Integer> disRed = new ArrayList(), disGreen = new ArrayList(), disBlue = new ArrayList();
-    public ArrayList<Integer> fitnessPorPixel;
-    int fitnessGeneral;
+    public ArrayList <Float> fitnessPorPixel = new ArrayList <> ();
+    float fitnessGeneral;
 
     public void setVentana(Ventana v) {
         this.v = v;
@@ -74,6 +74,33 @@ public class Logica {
             }
             generados.set(i, generados.get(i) + agregado);
         }
+    }
+    
+    /*Este metodo halla las distancias entre los pixeles de un plano real con el generado
+    recibe el plano real de color ejm: realRed, el generado ejm: generatedRed y el 
+    arraylist en el que guardara las distancias ejm: disRed*/
+    public ArrayList<Integer> hallarDistancia(ArrayList<Integer> real,ArrayList<Integer> generado, ArrayList<Integer> dist){
+        for(int i =0; i < real.size();i++){
+            dist.add(real.get(i)-generado.get(i));
+        }
+        return dist;
+    }
+    
+    /*El fitness de un pixel es el promedio de los fitness de el mismo para los diferentes
+    planos de color, hallado como 1/distancia buscando asi penalizar grandes distancias*/
+    public void calcularFitness(){
+        for(int i =0 ; i< realRed.size();i++){
+            fitnessPorPixel.add((((1/disRed.get(i))+(1/disBlue.get(i))+(1/disGreen.get(i)))/3f)); 
+        }
+    }
+    
+    /*Nos dice el desempeño en general de toda la poblacion de pixeles*/
+    public void fitnessGeneral(){
+        float suma =0f;
+        for(int i =0 ; i< fitnessPorPixel.size();i++){
+             suma+= fitnessPorPixel.get(i);
+        }
+        this.fitnessGeneral = suma / fitnessPorPixel.size();
     }
 
 }
