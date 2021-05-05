@@ -13,52 +13,70 @@ import javax.imageio.stream.ImageInputStream;
 import ventana.Ventana;
 
 public class Logica {
-
     public Ventana v;
-
     BufferedImage Imagen;
-    public ArrayList<Integer> realRed = new ArrayList(), realGreen = new ArrayList(), realBlue = new ArrayList();
-    public ArrayList<Integer> generatedRed = new ArrayList(), generatedGreen = new ArrayList(), generatedBlue = new ArrayList();
-    public ArrayList<Integer> disRed = new ArrayList(), disGreen = new ArrayList(), disBlue = new ArrayList();
-    public ArrayList <Float> fitnessPorPixel = new ArrayList <> ();
-    float fitnessGeneral;
+    BufferedImage ImagenAModificar;
+    public Cromosoma real= new Cromosoma(new ArrayList(), new ArrayList(), new ArrayList());
+    public ArrayList<Cromosoma> generados = new ArrayList();
+    public ArrayList<Cromosoma> dis = new ArrayList();
+    int v1;
+    String ur; 
 
     public void setVentana(Ventana v) {
         this.v = v;
     }
 
-    public void imagen() throws FileNotFoundException, IOException {
+    public Cromosoma imagen(String url) throws FileNotFoundException, IOException {
         try {
-            InputStream Input = new FileInputStream("src/pelusis.png");
+            InputStream Input;
+            if(url==""){
+                ur = "src/pelusis.png";
+                Input = new FileInputStream("src/pelusis.png");
+            }else{
+                ur = url;
+                Input = new FileInputStream(url);
+            }
+            
             ImageInputStream ImageInput = ImageIO.createImageInputStream(Input);
             BufferedImage ImagenL = ImageIO.read(ImageInput);
             this.Imagen = ImagenL;
+            this.ImagenAModificar = ImagenL;
+            this.v.d.url = url; 
+            this.v.d.image = ImagenL;
+            
+
             for (int y = 0; y < ImagenL.getHeight(); y++) {
                 for (int x = 0; x < ImagenL.getWidth(); x++) {
                     int srcPixel = ImagenL.getRGB(x, y);
                     Color c = new Color(srcPixel);
-                    realRed.add(c.getRed());
-                    realGreen.add(c.getGreen());
-                    realBlue.add(c.getBlue());
+                    real.red.add(c.getRed());
+                    real.green.add(c.getGreen());
+                    real.blue.add(c.getBlue());
                 }
             }
+            
             System.out.println("Ya guarde todo");
         } catch (IOException e) {
             System.out.println("Hay un error al cargar los pixeles de la imagen");
         }
+        
+        return this.real;
     }
 
-    public void generarcoloresRandom() {
+    public ArrayList<Cromosoma> generarcoloresRandom(Cromosoma real) {
         Random random = new Random();
+        generados.add(new Cromosoma(new ArrayList(), new ArrayList(), new ArrayList()));
         int red, green, blue;
-        for (int i = 0; i < Imagen.getHeight() * Imagen.getWidth(); i++) {
+        for (int i = 0; i < real.red.size(); i++) {
             red = random.nextInt(256);
             green = random.nextInt(256);
             blue = random.nextInt(256);
-            generatedRed.add(red);
-            generatedGreen.add(green);
-            generatedBlue.add(blue);
+            generados.get(0).red.add(red);
+            generados.get(0).green.add(green);
+            generados.get(0).blue.add(blue);
         }
+         //guarda la primera solucion aleatoria
+        return this.generados;
     }
 
     /*Metodo que cambia el valor de los pixeles de la imagen generada teniendo en 
@@ -75,32 +93,91 @@ public class Logica {
             generados.set(i, generados.get(i) + agregado);
         }
     }
-    
+
     /*Este metodo halla las distancias entre los pixeles de un plano real con el generado
-    recibe el plano real de color ejm: realRed, el generado ejm: generatedRed y el 
-    arraylist en el que guardara las distancias ejm: disRed*/
-    public ArrayList<Integer> hallarDistancia(ArrayList<Integer> real,ArrayList<Integer> generado, ArrayList<Integer> dist){
-        for(int i =0; i < real.size();i++){
-            dist.add(real.get(i)-generado.get(i));
+     recibe el plano real de color ejm: realRed, el generado ejm: generatedRed y el 
+     arraylist en el que guardara las distancias ejm: disRed*/
+    public void hallarDistancia() {
+        dis.add(new Cromosoma(new ArrayList(), new ArrayList(), new ArrayList()));
+        for (int i = 0; i < real.red.size(); i++) {
+            dis.get(0).red.add(real.red.get(i) - generados.get(0).red.get(i));
+            dis.get(0).green.add(real.green.get(i) - generados.get(0).green.get(i));
+            dis.get(0).blue.add(real.blue.get(i) - generados.get(0).blue.get(i));
         }
-        return dist;
+        
     }
-    
+
     /*El fitness de un pixel es el promedio de los fitness del mismo para los diferentes
-    planos de color, hallado como 1/distancia buscando asi penalizar grandes distancias*/
-    public void calcularFitness(){
-        for(int i =0 ; i< realRed.size();i++){
-            fitnessPorPixel.add((((1/disRed.get(i))+(1/disBlue.get(i))+(1/disGreen.get(i)))/3f)); 
+     planos de color, hallado como 1/distancia buscando asi penalizar grandes distancias*/
+    public void calcularFitness(int pos) {
+        float fr, fg, fb, suma ;
+        for (int i = 0; i < real.getBlue().size(); i++) {
+            fr = (float) Math.abs(1f/dis.get(pos).red.get(i));
+            fg = (float) Math.abs(1f/dis.get(pos).green.get(i));
+            fb = (float) Math.abs(1f/dis.get(pos).blue.get(i));
+            suma = fr+fg+fb;
+            generados.get(pos).f.add(suma/3);   
         }
     }
-    
+
     /*Nos dice el desempeño en general de toda la poblacion de pixeles*/
-    public void fitnessGeneral(){
-        float suma =0f;
-        for(int i =0 ; i< fitnessPorPixel.size();i++){
-             suma+= fitnessPorPixel.get(i);
+    public void fitnessGeneral() {
+        float sum = 0f;
+        for (int i = 0; i < generados.get(0).f.size(); i++) {
+            sum = sum + generados.get(0).f.get(i);
         }
-        this.fitnessGeneral = suma / fitnessPorPixel.size();
+        generados.get(0).setFitness(sum / generados.get(0).f.size()); 
+    }
+
+    public ArrayList<Cromosoma> imagenModificada(BufferedImage Imagen) {
+        this.ImagenAModificar = Imagen;
+        int contador = 0;
+        while (contador < ImagenAModificar.getHeight() * ImagenAModificar.getWidth()) {
+            for (int y = 0; y < ImagenAModificar.getHeight(); y++) {
+                for (int x = 0; x < ImagenAModificar.getWidth(); x++) {
+                    int pixel = ImagenAModificar.getRGB(x, y);
+                    Color color = new Color(pixel, true);
+                    color = new Color(generados.get(0).getRed().get(contador), generados.get(0).getGreen().get(contador), generados.get(0).getBlue().get(contador));
+                    ImagenAModificar.setRGB(x, y, color.getRGB());
+                    contador++;
+                }
+            }
+        }
+        generados.get(0).setImagen(ImagenAModificar);
+        return generados;
+    }
+
+    public void graficar() {
+        //this.v.d.image = Imagen;
+        this.v.d.url= ur;
+        this.v.d.imagenModificada = generados.get(0).imagen;
+        this.v.d.repaint();
+    }
+
+    public void llamartodo(Cromosoma r, ArrayList<Cromosoma> g) {
+        dis.clear();
+        generados.get(0).f.clear();
+        this.real = r;
+        this.generados = g;
+        System.out.println(real.blue.size());
+        hallarDistancia();
+        calcularFitness(0);
+        fitnessGeneral();
+        graficar();
+        seleccionDePixeles(generados.get(0).getRed(), dis.get(0).getRed());
+        seleccionDePixeles(generados.get(0).getGreen(), dis.get(0).getGreen());
+        seleccionDePixeles(generados.get(0).getBlue(), dis.get(0).getBlue());
+        imagenModificada(this.Imagen);
+        v1 = Integer.parseInt(v.iteraciones.getText().trim()) + 1;
+        v.iteraciones.setText("" + v1 + "");
+    }
+
+    public Cromosoma real() {
+        return real;
+    }
+
+    public ArrayList<Cromosoma> generado() {
+        return generados;
     }
 
 }
