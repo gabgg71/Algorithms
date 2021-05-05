@@ -13,27 +13,37 @@ import javax.imageio.stream.ImageInputStream;
 import ventana.Ventana;
 
 public class Logica {
-
     public Ventana v;
-    ArrayList<Integer> a=new ArrayList() , b=new ArrayList(), l=new ArrayList();
     BufferedImage Imagen;
     BufferedImage ImagenAModificar;
     public Cromosoma real= new Cromosoma(new ArrayList(), new ArrayList(), new ArrayList());
     public ArrayList<Cromosoma> generados = new ArrayList();
     public ArrayList<Cromosoma> dis = new ArrayList();
+    int v1;
+    String ur; 
 
     public void setVentana(Ventana v) {
         this.v = v;
     }
 
-    public Cromosoma imagen() throws FileNotFoundException, IOException {
+    public Cromosoma imagen(String url) throws FileNotFoundException, IOException {
         try {
-            InputStream Input = new FileInputStream("src/pelusis.png");
+            InputStream Input;
+            if(url==""){
+                ur = "src/pelusis.png";
+                Input = new FileInputStream("src/pelusis.png");
+            }else{
+                ur = url;
+                Input = new FileInputStream(url);
+            }
+            
             ImageInputStream ImageInput = ImageIO.createImageInputStream(Input);
             BufferedImage ImagenL = ImageIO.read(ImageInput);
             this.Imagen = ImagenL;
             this.ImagenAModificar = ImagenL;
+            this.v.d.url = url; 
             this.v.d.image = ImagenL;
+            
 
             for (int y = 0; y < ImagenL.getHeight(); y++) {
                 for (int x = 0; x < ImagenL.getWidth(); x++) {
@@ -50,7 +60,6 @@ public class Logica {
             System.out.println("Hay un error al cargar los pixeles de la imagen");
         }
         
-        System.out.println("Tam :"+real.blue.size());
         return this.real;
     }
 
@@ -67,7 +76,6 @@ public class Logica {
             generados.get(0).blue.add(blue);
         }
          //guarda la primera solucion aleatoria
-        System.out.println("Tam generados: "+generados.get(0).red.size());
         return this.generados;
     }
 
@@ -95,11 +103,6 @@ public class Logica {
             dis.get(0).red.add(real.red.get(i) - generados.get(0).red.get(i));
             dis.get(0).green.add(real.green.get(i) - generados.get(0).green.get(i));
             dis.get(0).blue.add(real.blue.get(i) - generados.get(0).blue.get(i));
-            if(i < 10){
-                System.out.println("real : "+real.red.get(i));
-                System.out.println("Generado: "+generados.get(0).red.get(i));
-                System.out.println("Distancia: "+dis.get(0).red.get(i));
-            }
         }
         
     }
@@ -128,18 +131,13 @@ public class Logica {
 
     public ArrayList<Cromosoma> imagenModificada(BufferedImage Imagen) {
         this.ImagenAModificar = Imagen;
-        System.out.println("a mod: "+ImagenAModificar.getWidth());
-        System.out.println("A mod alto: "+ImagenAModificar.getHeight());
         int contador = 0;
         while (contador < ImagenAModificar.getHeight() * ImagenAModificar.getWidth()) {
             for (int y = 0; y < ImagenAModificar.getHeight(); y++) {
                 for (int x = 0; x < ImagenAModificar.getWidth(); x++) {
-                    //Retrieving contents of a pixel
                     int pixel = ImagenAModificar.getRGB(x, y);
-                    //Creating a Color object from pixel value
                     Color color = new Color(pixel, true);
                     color = new Color(generados.get(0).getRed().get(contador), generados.get(0).getGreen().get(contador), generados.get(0).getBlue().get(contador));
-                    //Setting new Color object to the image
                     ImagenAModificar.setRGB(x, y, color.getRGB());
                     contador++;
                 }
@@ -150,7 +148,8 @@ public class Logica {
     }
 
     public void graficar() {
-        //this.v.d.image = real.imagen;
+        //this.v.d.image = Imagen;
+        this.v.d.url= ur;
         this.v.d.imagenModificada = generados.get(0).imagen;
         this.v.d.repaint();
     }
@@ -169,6 +168,8 @@ public class Logica {
         seleccionDePixeles(generados.get(0).getGreen(), dis.get(0).getGreen());
         seleccionDePixeles(generados.get(0).getBlue(), dis.get(0).getBlue());
         imagenModificada(this.Imagen);
+        v1 = Integer.parseInt(v.iteraciones.getText().trim()) + 1;
+        v.iteraciones.setText("" + v1 + "");
     }
 
     public Cromosoma real() {

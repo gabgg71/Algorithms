@@ -16,11 +16,13 @@ import javax.imageio.stream.ImageInputStream;
 import javax.swing.JPanel;
 
 public class Panel extends JPanel {
-    public BufferedImage image;
-    public BufferedImage imagenModificada= new BufferedImage(200,200,BufferedImage.TYPE_INT_RGB);;
+    public String url = "src/pelusis.png";
+    public BufferedImage image= new BufferedImage(1,1,BufferedImage.TYPE_INT_RGB);;
+    public BufferedImage imagenModificada= new BufferedImage(1,1,BufferedImage.TYPE_INT_RGB);
 
+    
     private Image original() throws FileNotFoundException, IOException {
-      InputStream Input = new FileInputStream("src/pelusis.png");
+      InputStream Input = new FileInputStream(url);
       ImageInputStream ImageInput = ImageIO.createImageInputStream(Input);
       BufferedImage ImagenL = ImageIO.read(ImageInput);
       Graphics g = ImagenL.getGraphics();
@@ -36,11 +38,10 @@ public class Panel extends JPanel {
         try {
             image = original();
             g.drawImage(image, 100,100,this);
-            g.drawImage(imagenModificada, 450, 100, this);
+            g.drawImage(imagenModificada, 600, 100, this);
         } catch (IOException ex) {
             Logger.getLogger(Panel.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
-
 }

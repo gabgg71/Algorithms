@@ -11,7 +11,7 @@ public class Launcher {
         Controlador c = new Controlador();
         c.setLogica(log);
         Ventana ex = new Ventana(log, c);
-        ex.getContentPane().setBackground(new Color(58,120,200));
+        ex.getContentPane().setBackground(new Color(30,30,30));
         log.setVentana(ex);
         ex.setVisible(true);
         ex.setAlwaysOnTop(true);
