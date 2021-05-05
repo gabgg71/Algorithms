@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package controlador;
 
 import java.awt.event.ActionEvent;
@@ -14,7 +19,7 @@ import logica.Cromosoma;
 import logica.Logica;
 
 public class Controlador implements ActionListener {
-
+    
     Logica l;
     Cromosoma real;
     ArrayList<Cromosoma> generados;
@@ -68,5 +73,4 @@ public class Controlador implements ActionListener {
             System.exit(0);
         }
     }
-
 }

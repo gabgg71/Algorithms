@@ -1,5 +1,5 @@
-package ventana;
 
+package ventana;
 import controlador.Controlador;
 import java.awt.Color;
 import java.io.File;
@@ -9,7 +9,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import logica.Logica;
-
 public class Ventana extends JFrame{
     Logica log;
     Controlador c;

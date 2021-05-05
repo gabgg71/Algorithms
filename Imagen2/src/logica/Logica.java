@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package logica;
 
 import java.awt.Color;
@@ -11,7 +16,6 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import ventana.Ventana;
-
 public class Logica {
     public Ventana v;
     BufferedImage Imagen;
@@ -179,5 +183,4 @@ public class Logica {
     public ArrayList<Cromosoma> generado() {
         return generados;
     }
-
 }

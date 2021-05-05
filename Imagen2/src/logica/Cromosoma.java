@@ -1,12 +1,13 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package logica;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
 public class Cromosoma {
-
-    //cada cromosoma representa una solucion
-
     public ArrayList<Integer> red;
     public ArrayList<Integer> green;
     public ArrayList<Integer> blue;
@@ -80,7 +81,4 @@ public class Cromosoma {
     public void setImagen(BufferedImage imagen) {
         this.imagen = imagen;
     }
-
-   
-    
 }
