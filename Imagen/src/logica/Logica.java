@@ -15,56 +15,60 @@ import ventana.Ventana;
 public class Logica {
 
     public Ventana v;
-
+    ArrayList<Integer> a=new ArrayList() , b=new ArrayList(), l=new ArrayList();
     BufferedImage Imagen;
     BufferedImage ImagenAModificar;
-    public ArrayList<Integer> realRed = new ArrayList(), realGreen = new ArrayList(), realBlue = new ArrayList();
-    public ArrayList<Integer> generatedRed = new ArrayList(), generatedGreen = new ArrayList(), generatedBlue = new ArrayList();
-    public ArrayList<Integer> disRed = new ArrayList(), disGreen = new ArrayList(), disBlue = new ArrayList();
-    public ArrayList<Float> fitnessPorPixel = new ArrayList<>();
-    float fitnessGeneral;
+    public Cromosoma real= new Cromosoma(new ArrayList(), new ArrayList(), new ArrayList());
+    public ArrayList<Cromosoma> generados = new ArrayList();
+    public ArrayList<Cromosoma> dis = new ArrayList();
 
     public void setVentana(Ventana v) {
         this.v = v;
     }
 
-    public BufferedImage imagen() throws FileNotFoundException, IOException {
+    public Cromosoma imagen() throws FileNotFoundException, IOException {
         try {
             InputStream Input = new FileInputStream("src/pelusis.png");
             ImageInputStream ImageInput = ImageIO.createImageInputStream(Input);
             BufferedImage ImagenL = ImageIO.read(ImageInput);
             this.Imagen = ImagenL;
             this.ImagenAModificar = ImagenL;
+            this.v.d.image = ImagenL;
+
             for (int y = 0; y < ImagenL.getHeight(); y++) {
                 for (int x = 0; x < ImagenL.getWidth(); x++) {
                     int srcPixel = ImagenL.getRGB(x, y);
                     Color c = new Color(srcPixel);
-                    realRed.add(c.getRed());
-                    realGreen.add(c.getGreen());
-                    realBlue.add(c.getBlue());
+                    real.red.add(c.getRed());
+                    real.green.add(c.getGreen());
+                    real.blue.add(c.getBlue());
                 }
             }
+            
             System.out.println("Ya guarde todo");
         } catch (IOException e) {
             System.out.println("Hay un error al cargar los pixeles de la imagen");
         }
         
-        return Imagen;
+        System.out.println("Tam :"+real.blue.size());
+        return this.real;
     }
 
-    public Colores generarcoloresRandom() {
+    public ArrayList<Cromosoma> generarcoloresRandom(Cromosoma real) {
         Random random = new Random();
+        generados.add(new Cromosoma(new ArrayList(), new ArrayList(), new ArrayList()));
         int red, green, blue;
-        for (int i = 0; i < Imagen.getHeight() * Imagen.getWidth(); i++) {
+        for (int i = 0; i < real.red.size(); i++) {
             red = random.nextInt(256);
             green = random.nextInt(256);
             blue = random.nextInt(256);
-            generatedRed.add(red);
-            generatedGreen.add(green);
-            generatedBlue.add(blue);
+            generados.get(0).red.add(red);
+            generados.get(0).green.add(green);
+            generados.get(0).blue.add(blue);
         }
-        Colores c = new Colores( generatedRed,generatedGreen, generatedBlue);
-        return c;
+         //guarda la primera solucion aleatoria
+        System.out.println("Tam generados: "+generados.get(0).red.size());
+        return this.generados;
     }
 
     /*Metodo que cambia el valor de los pixeles de la imagen generada teniendo en 
@@ -83,73 +87,96 @@ public class Logica {
     }
 
     /*Este metodo halla las distancias entre los pixeles de un plano real con el generado
-    recibe el plano real de color ejm: realRed, el generado ejm: generatedRed y el 
-    arraylist en el que guardara las distancias ejm: disRed*/
-    public ArrayList<Integer> hallarDistancia(ArrayList<Integer> real, ArrayList<Integer> generado, ArrayList<Integer> dist) {
-        for (int i = 0; i < real.size(); i++) {
-            dist.add(real.get(i) - generado.get(i));
+     recibe el plano real de color ejm: realRed, el generado ejm: generatedRed y el 
+     arraylist en el que guardara las distancias ejm: disRed*/
+    public void hallarDistancia() {
+        dis.add(new Cromosoma(new ArrayList(), new ArrayList(), new ArrayList()));
+        for (int i = 0; i < real.red.size(); i++) {
+            dis.get(0).red.add(real.red.get(i) - generados.get(0).red.get(i));
+            dis.get(0).green.add(real.green.get(i) - generados.get(0).green.get(i));
+            dis.get(0).blue.add(real.blue.get(i) - generados.get(0).blue.get(i));
+            if(i < 10){
+                System.out.println("real : "+real.red.get(i));
+                System.out.println("Generado: "+generados.get(0).red.get(i));
+                System.out.println("Distancia: "+dis.get(0).red.get(i));
+            }
         }
-        return dist;
+        
     }
 
     /*El fitness de un pixel es el promedio de los fitness del mismo para los diferentes
-    planos de color, hallado como 1/distancia buscando asi penalizar grandes distancias*/
-    public void calcularFitness() {
-        for (int i = 0; i < realRed.size(); i++) {
-            fitnessPorPixel.add((((1 / disRed.get(i)) + (1 / disBlue.get(i)) + (1 / disGreen.get(i))) / 3f));
+     planos de color, hallado como 1/distancia buscando asi penalizar grandes distancias*/
+    public void calcularFitness(int pos) {
+        float fr, fg, fb, suma ;
+        for (int i = 0; i < real.getBlue().size(); i++) {
+            fr = (float) Math.abs(1f/dis.get(pos).red.get(i));
+            fg = (float) Math.abs(1f/dis.get(pos).green.get(i));
+            fb = (float) Math.abs(1f/dis.get(pos).blue.get(i));
+            suma = fr+fg+fb;
+            generados.get(pos).f.add(suma/3);   
         }
     }
 
     /*Nos dice el desempeño en general de toda la poblacion de pixeles*/
     public void fitnessGeneral() {
-        float suma = 0f;
-        for (int i = 0; i < fitnessPorPixel.size(); i++) {
-            suma += fitnessPorPixel.get(i);
+        float sum = 0f;
+        for (int i = 0; i < generados.get(0).f.size(); i++) {
+            sum = sum + generados.get(0).f.get(i);
         }
-        this.fitnessGeneral = suma / fitnessPorPixel.size();
+        generados.get(0).setFitness(sum / generados.get(0).f.size()); 
     }
 
-    public void graficar() {
-        
+    public ArrayList<Cromosoma> imagenModificada(BufferedImage Imagen) {
+        this.ImagenAModificar = Imagen;
+        System.out.println("a mod: "+ImagenAModificar.getWidth());
+        System.out.println("A mod alto: "+ImagenAModificar.getHeight());
         int contador = 0;
-
-        while (contador < generatedRed.size()) {
+        while (contador < ImagenAModificar.getHeight() * ImagenAModificar.getWidth()) {
             for (int y = 0; y < ImagenAModificar.getHeight(); y++) {
                 for (int x = 0; x < ImagenAModificar.getWidth(); x++) {
                     //Retrieving contents of a pixel
                     int pixel = ImagenAModificar.getRGB(x, y);
                     //Creating a Color object from pixel value
                     Color color = new Color(pixel, true);
-                    //Retrieving the R G B values
-                    int red = generatedRed.get(contador);
-                    int green = generatedGreen.get(contador);
-                    int blue = generatedBlue.get(contador);
-                    //Creating new Color object
-                    color = new Color(red, green, blue);
+                    color = new Color(generados.get(0).getRed().get(contador), generados.get(0).getGreen().get(contador), generados.get(0).getBlue().get(contador));
                     //Setting new Color object to the image
                     ImagenAModificar.setRGB(x, y, color.getRGB());
                     contador++;
                 }
             }
-
         }
-        
-         this.v.d.image = Imagen;
-         this.v.d.imagenModificada = ImagenAModificar;
-         this.v.d.repaint();
+        generados.get(0).setImagen(ImagenAModificar);
+        return generados;
     }
 
-    public void llamartodo() {
-        this.disRed = hallarDistancia(realRed,generatedRed,disRed);
-        this.disGreen= hallarDistancia(realGreen,generatedGreen,disGreen);
-        this.disBlue = hallarDistancia(realBlue,generatedBlue,disBlue);
-        calcularFitness();
+    public void graficar() {
+        //this.v.d.image = real.imagen;
+        this.v.d.imagenModificada = generados.get(0).imagen;
+        this.v.d.repaint();
+    }
+
+    public void llamartodo(Cromosoma r, ArrayList<Cromosoma> g) {
+        dis.clear();
+        generados.get(0).f.clear();
+        this.real = r;
+        this.generados = g;
+        System.out.println(real.blue.size());
+        hallarDistancia();
+        calcularFitness(0);
         fitnessGeneral();
         graficar();
-        seleccionDePixeles(generatedRed,disRed);
-        seleccionDePixeles(generatedGreen,disGreen);
-        seleccionDePixeles(generatedBlue,disBlue);
-        
+        seleccionDePixeles(generados.get(0).getRed(), dis.get(0).getRed());
+        seleccionDePixeles(generados.get(0).getGreen(), dis.get(0).getGreen());
+        seleccionDePixeles(generados.get(0).getBlue(), dis.get(0).getBlue());
+        imagenModificada(this.Imagen);
     }
-}
 
+    public Cromosoma real() {
+        return real;
+    }
+
+    public ArrayList<Cromosoma> generado() {
+        return generados;
+    }
+
+}

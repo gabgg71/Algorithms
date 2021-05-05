@@ -1,21 +1,21 @@
 package controlador;
 
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import logica.Colores;
+import logica.Cromosoma;
 import logica.Logica;
 
 public class Controlador implements ActionListener{
-
 Logica l;
-Image Imagen;
-Colores c;
+Cromosoma real;
+ArrayList<Cromosoma> generados; 
 
 
 
@@ -24,9 +24,7 @@ Colores c;
     TimerTask task = new TimerTask() {
         @Override
         public void run() {
-            l.llamartodo();
-            
-            
+            l.llamartodo(real, generados);
         }
     };
     
@@ -37,15 +35,15 @@ Colores c;
     @Override
     public void actionPerformed(ActionEvent ae) {
         try {
-            
-            this.Imagen = l.imagen();
+            this.real = l.imagen();
         } catch (IOException ex) {
             Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Hay un error");
         }
-        l.generarcoloresRandom(); 
+         this.generados =l.generarcoloresRandom(this.real); 
+         
         
-        myTimer.schedule(task,500,700);
+        myTimer.schedule(task,10000,1000);
     }
   
 }

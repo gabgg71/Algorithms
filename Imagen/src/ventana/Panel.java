@@ -1,43 +1,46 @@
 package ventana;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
 import javax.swing.JPanel;
 
 public class Panel extends JPanel {
+    public BufferedImage image;
+    public BufferedImage imagenModificada= new BufferedImage(200,200,BufferedImage.TYPE_INT_RGB);;
 
-    public String url;
-    public Image image;
-    public Image imagenModificada;
-   
-
-    private void doDrawing(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-
-        File imagen = new File(url);
-
-        try {
-            image = ImageIO.read(imagen);
-        } catch (IOException ex) {
-
-            System.out.println("Fallo imagen");
-
-        }
-
-        g2d.drawImage(image, 100, 100, null);
-
-        g2d.drawImage(imagenModificada, 400, 100, null);
-
-    }
+    private Image original() throws FileNotFoundException, IOException {
+      InputStream Input = new FileInputStream("src/pelusis.png");
+      ImageInputStream ImageInput = ImageIO.createImageInputStream(Input);
+      BufferedImage ImagenL = ImageIO.read(ImageInput);
+      Graphics g = ImagenL.getGraphics();
+      g.drawImage(ImagenL, ImagenL.getWidth(),ImagenL.getWidth(), null);
+      return ImagenL;
+   }
 
     @Override
     public void paintComponent(Graphics g) {
-        g.drawImage(image, 0, 0, null);
+        super.paintComponent(g);
+        //doDrawing(g);
+        Image image;
+        try {
+            image = original();
+            g.drawImage(image, 100,100,this);
+            g.drawImage(imagenModificada, 450, 100, this);
+        } catch (IOException ex) {
+            Logger.getLogger(Panel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
 }
