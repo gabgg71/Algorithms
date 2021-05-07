@@ -19,10 +19,10 @@ import logica.Cromosoma;
 import logica.Logica;
 
 public class Controlador implements ActionListener {
-    
     Logica l;
     Cromosoma real;
     ArrayList<Cromosoma> generados;
+    
 
     Timer myTimer = new Timer();
 
@@ -30,6 +30,7 @@ public class Controlador implements ActionListener {
         @Override
         public void run() {
             l.llamartodo(real, generados);
+            
         }
     };
 
@@ -49,7 +50,7 @@ public class Controlador implements ActionListener {
             }
             this.generados = l.generarcoloresRandom(this.real);
 
-            myTimer.schedule(task, 10000, 1000);
+            myTimer.schedule(task, 2000, 500);
         }
         if (action.equals("b2")) {
             int respuesta = l.v.fc.showOpenDialog(l.v);

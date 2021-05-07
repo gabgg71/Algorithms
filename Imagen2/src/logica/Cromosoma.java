@@ -8,14 +8,14 @@ package logica;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 public class Cromosoma {
-    public ArrayList<Integer> red;
-    public ArrayList<Integer> green;
-    public ArrayList<Integer> blue;
-    public ArrayList<Float> f = new ArrayList();
+    public ArrayList<String> red;
+    public ArrayList<String> green;
+    public ArrayList<String> blue;
     public float fitness; //fitness de cada solucion
     BufferedImage imagen;
+    int posicion;
 
-    public Cromosoma(ArrayList<Integer> realRed, ArrayList<Integer> realGreen, ArrayList<Integer> realBlue) {
+    public Cromosoma(ArrayList<String> realRed, ArrayList<String> realGreen, ArrayList<String> realBlue) {
         this.blue = realBlue;
         this.green = realGreen;
         this.red = realRed;
@@ -25,7 +25,7 @@ public class Cromosoma {
         this.imagen = imagen;
     }
 
-    public Cromosoma(ArrayList<Integer> realRed, ArrayList<Integer> realGreen, ArrayList<Integer> realBlue, int fitness, BufferedImage imagen) {
+    public Cromosoma(ArrayList<String> realRed, ArrayList<String> realGreen, ArrayList<String> realBlue, int fitness, BufferedImage imagen) {
         this.blue = realBlue;
         this.green = realGreen;
         this.red = realRed;
@@ -33,37 +33,30 @@ public class Cromosoma {
         this.imagen = imagen;
     }
 
-    public ArrayList<Integer> getRed() {
+    public ArrayList<String> getRed() {
         return red;
     }
 
-    public void setRed(ArrayList<Integer> red) {
+    public void setRed(ArrayList<String> red) {
         this.red = red;
     }
 
-    public ArrayList<Integer> getGreen() {
+    public ArrayList<String> getGreen() {
         return green;
     }
 
-    public void setGreen(ArrayList<Integer> green) {
+    public void setGreen(ArrayList<String> green) {
         this.green = green;
     }
 
-    public ArrayList<Integer> getBlue() {
+    public ArrayList<String> getBlue() {
         return blue;
     }
 
-    public void setBlue(ArrayList<Integer> blue) {
+    public void setBlue(ArrayList<String> blue) {
         this.blue = blue;
     }
 
-    public ArrayList<Float> getF() {
-        return f;
-    }
-
-    public void setF(ArrayList<Float> f) {
-        this.f = f;
-    }
 
     public float getFitness() {
         return fitness;
@@ -80,5 +73,13 @@ public class Cromosoma {
 
     public void setImagen(BufferedImage imagen) {
         this.imagen = imagen;
+    }
+
+    public int getPosicion() {
+        return posicion;
+    }
+
+    public void setPosicion(int posicion) {
+        this.posicion = posicion;
     }
 }
