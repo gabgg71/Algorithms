@@ -55,7 +55,36 @@ public class Logica {
         }
         return aliens;
     }
-    
+        
+        public void jugandoSin(Cromosoma aProbar) {
+        //iteramos en los cromosomas 
+        aliens.clear();
+        for(int i =0; i<copia.size(); i++){
+            aliens.add(new Alien(is[i], js[i]));
+            aliens.get(i).setTipo(tipos[i]);
+            aliens.get(i).setDispara(false);
+            aliens.get(i).setSentido(0);
+        }
+        int fila = matricita.length - 1;
+        int columna = (matricita[0].length / 2);
+        aProbar.setFitness(0);
+        // 01 derecha 10 izquierda 00 centro 11 dispara
+
+        for (int j = 0; j < aProbar.secuencia.length(); j = j + 2) {
+            for (int w = 0; w < aliens.size(); w++) { //movimiento y disparos de los aliens
+                patronDisparo = 3;
+                if (w % patronDisparo == 0) {
+                    aliens.get(w).setDispara(true);
+                }
+                if (aliens.get(w).getSentido() == 0) {
+                    if (aliens.get(w).getJ() + 1 < matricita[0].length) {
+                        
+                    }
+                }
+            }
+        }
+        }
+        
     public void llamarTodo() {
         inicializaM(20, 40);
         v.d.matriz = this.matricita;
