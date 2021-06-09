@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 public class Panel extends JPanel{
     public int[][] matriz = new int[0][0];
+    public boolean hayDisparo;
     
      private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
