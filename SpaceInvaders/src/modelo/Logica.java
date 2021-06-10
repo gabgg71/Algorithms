@@ -151,6 +151,95 @@ public class Logica {
                 }
             }
         }
+          public ArrayList<Cromosoma> generaSecuencias(int n){ //Para los primeras n secuencias
+        String seq = "";
+        int pos1;
+        //Generamos 100 acciones por turno (generacion)
+        for (int j = 0; j < n; j++) {
+            for (int i = 0; i < 200; i++) {
+                pos1 = (int) (Math.random() * (2));
+                seq = seq + pos1;
+            }
+            soluciones.add(new Cromosoma(seq));
+            seq = "";
+        }
+        return soluciones;
+    }
+
+    public void ruleta(int desde, int hasta) { //Para cruzar las secuencias existentes
+        System.out.println("Entre a ruleta");
+        for (int i = desde; i < hasta; i++) {
+            int parejaAleatoria = (int) (Math.random() * (soluciones.size()) - 1);
+            String hijo;
+
+            String agregar = soluciones.get(i).getSecuencia().substring(0, soluciones.get(i).secuencia.length() - 2);
+            while (soluciones.get(i).secuencia.length() < 200) {
+                int falta = 200 - soluciones.get(i).secuencia.length() + 2;
+                if (soluciones.get(i).secuencia.length() > falta) {
+                    agregar = agregar + soluciones.get(i).secuencia.substring(0, falta);
+                    if(agregar.substring(agregar.length()-2, agregar.length()).equals("22")){
+                        agregar = agregar.substring(0, agregar.length()-2);
+                    }
+                } else {
+                    if (((agregar.length() + soluciones.get(i).secuencia.length()-2) >= 200)) {
+                        agregar = agregar + soluciones.get(i).secuencia.substring(0, falta);
+                       /* if(agregar.substring(agregar.length()-2, agregar.length()).equals("22")){
+                        agregar = agregar.substring(0, agregar.length()-2);
+                    }*/
+                    } else {
+                        if(soluciones.get(i).secuencia.length() > 2){
+                            agregar = agregar + soluciones.get(i).secuencia.substring(0, soluciones.get(i).secuencia.length()-2);
+                        }else{
+                            agregar = agregar + "01";
+                        }  
+                    }
+                }
+                soluciones.get(i).setSecuencia(agregar);
+            }
+            if (soluciones.get(i).getSecuencia().length() > 200) {
+                int sobra = soluciones.get(i).getSecuencia().length() - 200;
+                soluciones.get(i).setSecuencia(soluciones.get(i).secuencia.substring(0, soluciones.get(i).getSecuencia().length() - sobra));
+            }
+            agregar = soluciones.get(parejaAleatoria).getSecuencia().substring(0, soluciones.get(parejaAleatoria).secuencia.length() - 2);
+            while (soluciones.get(parejaAleatoria).secuencia.length() < 200) {
+                int falta = 200 - soluciones.get(parejaAleatoria).secuencia.length() + 2;
+                if (soluciones.get(parejaAleatoria).secuencia.length() > falta) {
+                    agregar = agregar + soluciones.get(parejaAleatoria).secuencia.substring(0, falta);
+                    if(agregar.substring(agregar.length()-2, agregar.length()).equals("22")){
+                        agregar = agregar.substring(0, agregar.length()-2);
+                    }
+                } else {
+                    if (((agregar.length() + soluciones.get(parejaAleatoria).secuencia.length()-2) >= 200)) {
+                        agregar = agregar + soluciones.get(parejaAleatoria).secuencia.substring(0, falta);
+                        if(agregar.substring(agregar.length()-2, agregar.length()).equals("22")){
+                        agregar = agregar.substring(0, agregar.length()-2);
+                    }
+                    } else {
+                        if(soluciones.get(i).secuencia.length() > 2){
+                            agregar = agregar + soluciones.get(i).secuencia.substring(0, soluciones.get(i).secuencia.length()-2);
+                        }else{
+                            agregar = agregar + "01";
+                        } 
+                    }
+                }
+
+                soluciones.get(parejaAleatoria).setSecuencia(agregar);
+
+            }
+            if (soluciones.get(parejaAleatoria).getSecuencia().length() > 200) {
+                int sobra = soluciones.get(parejaAleatoria).getSecuencia().length() - 200;
+                soluciones.get(parejaAleatoria).setSecuencia(soluciones.get(parejaAleatoria).secuencia.substring(0, soluciones.get(parejaAleatoria).getSecuencia().length() - sobra));
+            }
+            System.out.println("Hice validaciones");
+            hijo = soluciones.get(i).secuencia.substring(0, soluciones.get(i).secuencia.length() / 2) + soluciones.get(parejaAleatoria).secuencia.substring((soluciones.get(parejaAleatoria).secuencia.length() / 2)-2, soluciones.get(parejaAleatoria).secuencia.length()-2);
+            soluciones.add(new Cromosoma(hijo));
+            System.out.println("valor de i: " + i + "Agrege hijo");
+        }
+    }
+
+    public ArrayList<Cromosoma> getSoluciones() {
+        return soluciones;
+    }
         
     public void llamarTodo() {
         matricita = inicializaM(20, 40);
@@ -208,4 +297,13 @@ public class Logica {
               
     }
 
+    public static void esperar() {
+        try {
+            Thread.sleep(30);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 }
+
+
